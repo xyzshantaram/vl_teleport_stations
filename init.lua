@@ -86,6 +86,18 @@ core.register_node("vl_teleport_stations:teleport_base", {
         -- Let default digging happen (removes node, drops item, wears tool)
         return core.node_dig(pos, node, digger)
     end,
+    on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+        if itemstack:get_name() == "vl_teleport_stations:teleport_core" then
+            return
+        end
+
+        local meta = core.get_meta(pos)
+        local name = meta:get_string("name")
+        local waypoint_label = "Teleport Station: " .. name
+        local waypoint_pos = vector.add(pos, { x = 0, y = 1, z = 0 })
+        local remove = Util.show_waypoint(clicker, waypoint_pos, waypoint_label, false)
+        core.after(3, remove)
+    end
 })
 
 core.register_craft({
