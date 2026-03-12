@@ -59,10 +59,14 @@ core.register_node("vl_teleport_stations:teleport_base", {
     },
     groups = { pickaxey = 3 },
     after_place_node = function(pos, placer, _, _)
-        -- Make sure to check placer
         if placer and placer:is_player() then
             local meta = core.get_meta(pos)
+            local tp_meta = {
+                dir = placer:get_look_dir(),
+                offset = vector.subtract(placer:get_pos(), pos)
+            }
             meta:set_string("owner", placer:get_player_name())
+            meta:set_string("tp_meta", core.serialize(tp_meta))
             VlTeleport.on_station_placed(pos, placer:get_player_name())
         end
 
@@ -187,7 +191,15 @@ function VlTeleport.on_station_use_submit(player, fields)
     local pos = VlTeleport.get_station(fields.station_name)
 
     if pos then
-        player:set_pos(vector.add(pos, { x = 0, y = 0, z = 1 }))
+        local dest_meta = core.get_meta(pos)
+        local tp_meta = core.deserialize(dest_meta:get_string("tp_meta"))
+        local h = math.atan2(tp_meta.dir.x, tp_meta.dir.z)
+        local v = math.asin(tp_meta.dir.y)
+
+        player:set_look_horizontal(h)
+        player:set_look_vertical(v)
+        player:set_pos(vector.add(pos, tp_meta.offset))
+
         local inv = player:get_inventory()
         inv:remove_item("main", "vl_teleport_stations:teleport_core 1")
     end
