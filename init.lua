@@ -91,7 +91,6 @@ core.register_node("vl_teleport_stations:teleport_base", {
         local name = meta:get_string("name")
         VlTeleport.set_station(name, nil)
 
-        -- Let default digging happen (removes node, drops item, wears tool)
         return core.node_dig(pos, node, digger)
     end,
     on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
@@ -193,8 +192,8 @@ function VlTeleport.on_station_use_submit(player, fields)
     if pos then
         local dest_meta = core.get_meta(pos)
         local tp_meta = core.deserialize(dest_meta:get_string("tp_meta"))
-        local h = math.atan2(tp_meta.dir.x, tp_meta.dir.z)
-        local v = math.asin(tp_meta.dir.y)
+        local h = -math.atan2(tp_meta.dir.x, tp_meta.dir.z)
+        local v = -math.asin(tp_meta.dir.y)
 
         player:set_look_horizontal(h)
         player:set_look_vertical(v)
