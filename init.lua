@@ -140,7 +140,7 @@ core.register_craft({
     type = "shaped",
     output = "vl_teleport_stations:teleport_gps",
     recipe = {
-        { "", "mcl_compass:18",    "" },
+        { "", "group:compass",     "" },
         { "", "mesecons:redstone", "" },
         { "", "group:vl_map",      "" },
     }
