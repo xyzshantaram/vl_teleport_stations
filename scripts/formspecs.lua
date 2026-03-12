@@ -2,8 +2,9 @@ VlTeleport = VlTeleport or {}
 
 function VlTeleport.get_station_place_formspec()
     local formspec = {
-        "formspec_version[6]",
+        "formspec_version[10]",
         "size[6.375,3]",
+        "allow_close[false]",
         "field[0.375,0.75;5.625,0.8;station_name;Station name;]",
         "button_exit[0.4,1.8;2.6,0.8;station_place_cancelled;Cancel]",
         "button_exit[3.375,1.8;2.6,0.8;station_place;Place]"
@@ -29,8 +30,9 @@ end
 function VlTeleport.get_station_use_formspec()
     local station_list = get_station_list()
     local formspec = {
-        "formspec_version[6]",
+        "formspec_version[10]",
         "size[6.375,3.375]",
+        "allow_close[false]",
         "button_exit[0.4,2.2;2.6,0.8;station_go_cancelled;Cancel]",
         "button_exit[3.375,2.2;2.6,0.8;station_go;Go]",
         "dropdown[0.375,1.1;5.625,0.8;station_name;" .. station_list .. ";1;false]",
