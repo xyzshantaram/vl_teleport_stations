@@ -21,3 +21,13 @@ The teleporter base station uses modified furnace textures from
 [Scout339/FamiliarCraft-Luanti](https://github.com/Scout339/FamiliarCraft-Luanti)
 under the terms of its
 [CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license.
+
+Thanks to Luanti/VoxeLibre teams for such an awesome engine/game! And to
+@rubenwardy for the Luanti Modding Book, an indispensable resource while
+creating this mod.
+
+## License
+
+The source code of this mod is provided to you under the terms of the
+[MIT License](./LICENSE.md). The art assets are provided under
+[CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
