@@ -71,6 +71,10 @@ core.register_node("vl_teleport_stations:teleport_base", {
         end
     end,
     on_dig = function(pos, node, digger)
+        if not digger:is_player() then
+            return
+        end
+
         local meta = core.get_meta(pos)
         local owner = meta:get_string("owner")
         local player_name = digger:get_player_name()
@@ -123,21 +127,22 @@ function VlTeleport.on_station_used(name)
 end
 
 ---Formspec result handler for station placement.
----@param player string
+---@param player table
 ---@param fields table
 function VlTeleport.on_station_place_submit(player, fields)
-    local context = get_context(player)
+    local context = get_context(player:get_player_name())
+    local inv = player:get_inventory()
 
-    local player_ref = core.get_player_by_name(player)
-    if not player_ref then
-        return
-    end
+    fields.station_place_cancelled = fields.try_quit or fields.station_place_cancelled
 
     if fields.station_place_cancelled then
+        if fields.try_quit then
+            core.close_formspec(player:get_player_name(), "vl_teleport_stations:station_place")
+        end
         core.remove_node(context.pos)
-        local inv = player_ref:get_inventory()
         local stack = ItemStack("vl_teleport_stations:teleport_base 1")
-        local leftover = inv:add_item("main", stack)
+        inv:add_item("main", stack)
+        return
     end
 
     if not context.pos or not fields.station_name then
@@ -148,12 +153,11 @@ function VlTeleport.on_station_place_submit(player, fields)
     local existing = VlTeleport.get_station(fields.station_name)
 
     if existing then
-        core.chat_send_player(player, "A station with that name already exists!")
+        core.chat_send_player(player:get_player_name(), "A station with that name already exists!")
         local node = core.get_node(context.pos)
 
-        if node.name == "vl_teleport_stations:teleport_base" and meta:get_string("owner") == player then
+        if node.name == "vl_teleport_stations:teleport_base" and meta:get_string("owner") == player:get_player_name() then
             core.remove_node(context.pos)
-            local inv = player_ref:get_inventory()
             local stack = ItemStack("vl_teleport_stations:teleport_base 1")
             local leftover = inv:add_item("main", stack)
 
@@ -167,6 +171,7 @@ function VlTeleport.on_station_place_submit(player, fields)
 
     meta:set_string("name", fields.station_name)
     VlTeleport.set_station(fields.station_name, context.pos)
+    inv:remove_item("main", "vl_teleport_stations:teleport_base 1")
     context.pos = nil
 end
 
@@ -179,22 +184,17 @@ function VlTeleport.on_station_use_submit(player, fields)
         return
     end
 
-    local player_ref = core.get_player_by_name(player)
-    if not player_ref then
-        return
-    end
-
     local pos = VlTeleport.get_station(fields.station_name)
 
     if pos then
-        player_ref:set_pos(vector.add(pos, { x = 0, y = 1, z = 0 }))
-        local inv = player_ref:get_inventory()
+        player:set_pos(vector.add(pos, { x = 0, y = 0, z = 1 }))
+        local inv = player:get_inventory()
         inv:remove_item("main", "vl_teleport_stations:teleport_core 1")
     end
 end
 
 ---Player fields receive handler.
----@param player string
+---@param player table
 ---@param formname string
 ---@param fields table
 core.register_on_player_receive_fields(function(player, formname, fields)
