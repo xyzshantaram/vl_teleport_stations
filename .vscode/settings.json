@@ -1,0 +1,7 @@
+{
+    "Lua.diagnostics.globals": [
+        "core",
+        "ItemStack",
+        "vector"
+    ]
+}
