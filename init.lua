@@ -62,6 +62,7 @@ core.register_node("vl_teleport_stations:teleport_base", {
     groups = { pickaxey = 3 },
     _mcl_hardness = 2,
     _mcl_blast_resistance = 1200,
+    light_source = 14,
     drop = "vl_teleport_stations:teleport_base",
     after_place_node = function(pos, placer, _, _)
         if placer and placer:is_player() then
