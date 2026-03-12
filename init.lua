@@ -42,7 +42,7 @@ core.register_craft({
     type = "shaped",
     output = "vl_teleport_stations:teleport_core",
     recipe = {
-        { "mcl_core:iron_nugget", "mcl_core:iron_nugget",         "", },
+        { "",                     "mcl_core:iron_nugget",         "", },
         { "mcl_core:iron_nugget", "mesecons_torch:redstoneblock", "mcl_core:iron_nugget", },
         { "",                     "mcl_core:iron_nugget",         "", }
     }
@@ -116,9 +116,33 @@ core.register_craft({
     type = "shaped",
     output = "vl_teleport_stations:teleport_base",
     recipe = {
-        { "mcl_core:iron_nugget", "mcl_compass:18",               "mcl_core:iron_nugget", },
-        { "mcl_core:iron_nugget", "mesecons_torch:redstoneblock", "mcl_core:iron_nugget", },
-        { "",                     "mcl_core:iron_nugget",         "", }
+        { "mcl_core:diamond",    "group:vl_map",                 "mcl_core:diamond", },
+        { "mcl_core:iron_ingot", "mesecons_torch:redstoneblock", "mcl_core:iron_ingot", },
+        { "mcl_core:iron_ingot", "mcl_core:iron_ingot",          "mcl_core:iron_ingot", }
+    }
+})
+
+core.register_craftitem("vl_teleport_stations:teleport_gps", {
+    description = "Teleport Station GPS",
+    -- VoxeLibre specific, displays tooltip
+    _tt_help = "Can set waypoints toward teleport stations.",
+    inventory_image = "teleport_gps.png",
+    on_place = function(stack, _, _)
+        return stack
+    end,
+    on_secondary_use = function(stack, user)
+        VlTeleport.on_gps_used(user:get_player_name())
+        return stack
+    end
+})
+
+core.register_craft({
+    type = "shaped",
+    output = "vl_teleport_stations:teleport_gps",
+    recipe = {
+        { "", "mcl_compass:18",    "" },
+        { "", "mesecons:redstone", "" },
+        { "", "group:vl_map",      "" },
     }
 })
 
@@ -131,7 +155,33 @@ function VlTeleport.on_station_placed(pos, name)
 end
 
 function VlTeleport.on_station_used(name, stn)
-    core.show_formspec(name, "vl_teleport_stations:station_use", VlTeleport.get_station_use_formspec(stn))
+    core.show_formspec(name, "vl_teleport_stations:station_use", VlTeleport.get_station_use_formspec(stn, false))
+end
+
+function VlTeleport.on_gps_used(name, stn)
+    core.show_formspec(name, "vl_teleport_stations:gps_use", VlTeleport.get_station_use_formspec(stn, true))
+end
+
+function VlTeleport.on_gps_use_submit(player, fields)
+    if fields.try_quit then
+        core.close_formspec(player:get_player_name(), "vl_teleport_stations:gps_use")
+    end
+
+    local context = get_context(player:get_player_name())
+
+    if fields.station_go_cancelled or not fields.station_name then
+        if context.cleanup_waypoint then
+            context.cleanup_waypoint()
+        end
+        context.cleanup_waypoint = nil
+    end
+
+    if not fields.station_go then
+        return
+    end
+
+    local pos = VlTeleport.get_station(fields.station_name)
+    context.cleanup_waypoint = Util.show_waypoint(player, pos, "TP: " .. fields.station_name, true)
 end
 
 ---Formspec result handler for station placement.
@@ -179,12 +229,16 @@ function VlTeleport.on_station_place_submit(player, fields)
 
     meta:set_string("name", fields.station_name)
     VlTeleport.set_station(fields.station_name, context.pos)
-    -- inv:remove_item("main", "vl_teleport_stations:teleport_base 1")
     context.pos = nil
 end
 
 function VlTeleport.on_station_use_submit(player, fields)
+    fields.station_go_cancelled = fields.try_quit or fields.station_go_cancelled
+
     if fields.station_go_cancelled or not fields.station_name then
+        if fields.try_quit then
+            core.close_formspec(player:get_player_name(), "vl_teleport_stations:station_use")
+        end
         return
     end
 
@@ -220,5 +274,9 @@ core.register_on_player_receive_fields(function(player, formname, fields)
 
     if formname == "vl_teleport_stations:station_use" then
         VlTeleport.on_station_use_submit(player, fields)
+    end
+
+    if formname == "vl_teleport_stations:gps_use" then
+        VlTeleport.on_gps_use_submit(player, fields)
     end
 end)
