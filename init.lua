@@ -60,6 +60,8 @@ core.register_node("vl_teleport_stations:teleport_base", {
         "teleport_station_front.png"
     },
     groups = { pickaxey = 3 },
+    _mcl_hardness = 2,
+    _mcl_blast_resistance = 1200,
     drop = "vl_teleport_stations:teleport_base",
     after_place_node = function(pos, placer, _, _)
         if placer and placer:is_player() then
@@ -177,7 +179,7 @@ function VlTeleport.on_station_place_submit(player, fields)
 
     meta:set_string("name", fields.station_name)
     VlTeleport.set_station(fields.station_name, context.pos)
-    inv:remove_item("main", "vl_teleport_stations:teleport_base 1")
+    -- inv:remove_item("main", "vl_teleport_stations:teleport_base 1")
     context.pos = nil
 end
 
