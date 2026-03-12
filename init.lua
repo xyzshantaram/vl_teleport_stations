@@ -58,6 +58,7 @@ core.register_node("vl_teleport_stations:teleport_base", {
         "teleport_station_front.png"
     },
     groups = { pickaxey = 3 },
+    drop = "vl_teleport_stations:teleport_base",
     after_place_node = function(pos, placer, _, _)
         if placer and placer:is_player() then
             local meta = core.get_meta(pos)
