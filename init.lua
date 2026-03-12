@@ -17,7 +17,9 @@ core.register_on_leaveplayer(function(player)
 end)
 
 core.register_craftitem("vl_teleport_stations:teleport_core", {
-    description = "Teleport core. Use it on a base station to allow teleporting.",
+    description = "Teleport Core",
+    -- VoxeLibre specific, displays tooltip
+    _tt_help = "Teleport core. Use it on a base station to allow teleporting.",
     inventory_image = "teleport_core.png",
     on_place = function(stack, placer, pointed_thing)
         if placer:is_player() and pointed_thing.type == "node" then
@@ -45,7 +47,8 @@ core.register_craft({
 })
 
 core.register_node("vl_teleport_stations:teleport_base", {
-    description = "Teleporter base station. Place it and use a teleport core on it.",
+    description = "Teleporter Base",
+    __tt_help = "Teleporter base station. Place it and use a teleport core on it.",
     tiles = {
         "teleport_station_top.png",
         "teleport_station_bottom.png",
@@ -54,7 +57,7 @@ core.register_node("vl_teleport_stations:teleport_base", {
         "teleport_station_front.png",
         "teleport_station_front.png"
     },
-    groups = { cracky = 3 },
+    groups = { pickaxey = 3 },
     after_place_node = function(pos, placer, _, _)
         -- Make sure to check placer
         if placer and placer:is_player() then
