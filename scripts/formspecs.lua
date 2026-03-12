@@ -27,18 +27,20 @@ local function get_station_list()
     return table.concat(names, ",")
 end
 
-function VlTeleport.get_station_use_formspec(cur_stn)
+function VlTeleport.get_station_use_formspec(cur_stn, is_gps)
     local station_list = get_station_list()
     local loc_str = core.formspec_escape(cur_stn)
+    local prompt = is_gps and "Select target station" or "Where do you want to go?"
+    local cancel_text = is_gps and "Clear" or "Cancel"
     local formspec = {
         "formspec_version[10]",
         "size[6.375,3.675]",
         "allow_close[false]",
-        "button_exit[0.4,2.5;2.6,0.8;station_go_cancelled;Cancel]",
+        "button_exit[0.4,2.5;2.6,0.8;station_go_cancelled;" .. cancel_text .. "]",
         "button_exit[3.375,2.5;2.6,0.8;station_go;Go]",
         "dropdown[0.375,1.4;5.625,0.8;station_name;" .. station_list .. ";1;false]",
-        "label[0.375,1;Where do you want to go?]",
-        "label[0.375,0.5;Current location: " .. loc_str .. "]"
+        "label[0.375,1;" .. prompt .. "]",
+        "label[0.375,0.5;" .. (is_gps and "Set waypoint" or ("Current location: " .. loc_str)) .. "]"
     }
 
     return table.concat(formspec, "")
