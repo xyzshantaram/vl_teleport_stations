@@ -14,11 +14,12 @@ function Util.has_value(tab, val)
     return false
 end
 
-function Util.get_waypoint_text_size(text, font_size)
+function Util.get_waypoint_text_size(text, font_size, lines)
     local char_width = font_size or 12
+    lines = lines or 1
     return {
         x = #text * char_width + 10, -- add padding
-        y = 20
+        y = 20 * lines
     }
 end
 
@@ -28,7 +29,7 @@ function Util.show_waypoint(player, pos, text, show_distance)
         name = text,
         world_pos = pos,
         text = show_distance and "m" or nil,
-        precision = show_distance and 2 or 0,
+        precision = show_distance and 1 or 0,
         number = 0xFFFFFF
     })
 
@@ -37,7 +38,7 @@ function Util.show_waypoint(player, pos, text, show_distance)
         world_pos = pos,
         text = "waypoint_bg.png",
         z_index = -300,
-        scale = Util.get_waypoint_text_size(text)
+        scale = Util.get_waypoint_text_size(text, 12, 2)
     })
 
     local removed = false
