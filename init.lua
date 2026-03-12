@@ -29,7 +29,9 @@ core.register_craftitem("vl_teleport_stations:teleport_core", {
                 return stack
             end
 
-            VlTeleport.on_station_used(player)
+            local meta = core.get_meta(pointed_thing.under)
+            local stn = meta:get_string("name")
+            VlTeleport.on_station_used(player, stn)
         end
 
         return stack
@@ -126,8 +128,8 @@ function VlTeleport.on_station_placed(pos, name)
     core.show_formspec(name, "vl_teleport_stations:station_place", VlTeleport.get_station_place_formspec())
 end
 
-function VlTeleport.on_station_used(name)
-    core.show_formspec(name, "vl_teleport_stations:station_use", VlTeleport.get_station_use_formspec())
+function VlTeleport.on_station_used(name, stn)
+    core.show_formspec(name, "vl_teleport_stations:station_use", VlTeleport.get_station_use_formspec(stn))
 end
 
 ---Formspec result handler for station placement.
