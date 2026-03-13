@@ -182,6 +182,9 @@ function VlTeleport.on_gps_use_submit(player, fields)
     end
 
     local pos = VlTeleport.get_station(fields.station_name)
+    if context.cleanup_waypoint then
+        context.cleanup_waypoint()
+    end
     context.cleanup_waypoint = Util.show_waypoint(player, pos, "TP: " .. fields.station_name, true)
 end
 
